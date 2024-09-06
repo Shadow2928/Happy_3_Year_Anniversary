@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anniversary Celebration</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #ffcccc, #ff99cc);
+      overflow: hidden;
+      height: 100%;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    /* Fullscreen LED Border */
+    .led-border {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border: 1.5vw solid;
+      border-image: linear-gradient(45deg, pink, red, pink, red) 1;
+      animation: blink 1s infinite alternate;
+      padding: 2vw;
+      box-sizing: border-box;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    @keyframes blink {
+      0% {border-color: pink;}
+      50% {border-color: red;}
+      100% {border-color: violet;}
+    }
+
+    /* Centered Content */
+    .content {
+      text-align: center;
+    }
+
+    /* Cake and Candle */
+    #cake {
+      font-size: 12vw;
+      display: inline-block;
+      position: relative;
+    }
+
+    #candle {
+      font-size: 4vw;
+      display: inline-block;
+      position: relative;
+      top: -5vw;
+      left: 6vw;
+    }
+
+    /* Balloons */
+    .balloon {
+      position: absolute;
+      bottom: -15vh;
+      width: 8vw;
+      height: 10vh;
+      background: radial-gradient(circle at bottom, #ff7373, #ff0000);
+      border-radius: 50% 50% 50% 50%;
+      box-shadow: inset -15px -5px 10px rgba(0, 0, 0, 0.3);
+      animation: floatBalloon 8s ease-in-out infinite;
+    }
+
+    .balloon:nth-child(even) {
+      background: radial-gradient(circle at bottom, #ff99cc, #ff3366);
+      animation-duration: 10s;
+    }
+
+    @keyframes floatBalloon {
+      0% {transform: translateY(0) rotate(0deg);}
+      50% {transform: translateY(-50vh) rotate(20deg);}
+      100% {transform: translateY(-100vh) rotate(-20deg);}
+    }
+
+    /* Fireworks */
+    .fireworks {
+      position: absolute;
+      width: 0.5vw;
+      height: 0.5vw;
+      background: white;
+      border-radius: 50%;
+      animation: explode 1.5s ease-out forwards;
+    }
+
+    @keyframes explode {
+      0% {transform: scale(0); opacity: 1;}
+      100% {transform: scale(20); opacity: 0;}
+    }
+
+    .spark {
+      position: absolute;
+      width: 0.3vw;
+      height: 0.3vw;
+      background: red;
+      border-radius: 50%;
+      animation: sparkAnimation 1.5s ease-out forwards;
+    }
+
+    @keyframes sparkAnimation {
+      0% {transform: translate(0, 0); opacity: 1;}
+      100% {transform: translate(10vw, 10vh); opacity: 0;}
+    }
+
+    /* Message */
+    #message {
+      font-size: 2vw;
+      color: red;
+      margin-top: 3vh;
+      display: none;
+    }
+
+    /* Buttons */
+    #cutCakeBtn, #playAudioBtn {
+      padding: 1vh 2vw;
+      font-size: 1.5vw;
+      background-color: hotpink;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-top: 2vh;
+    }
+
+    /* Responsive Media Queries */
+    @media (max-width: 768px) {
+      #cake {
+        font-size: 20vw;
+      }
+
+      #candle {
+        font-size: 6vw;
+        top: -10vw;
+        left: 8vw;
+      }
+
+      #cutCakeBtn, #playAudioBtn {
+        font-size: 3.5vw;
+        padding: 1.5vh 4vw;
+      }
+
+      #message {
+        font-size: 4vw;
+      }
+    }
+
+    @media (max-width: 480px) {
+      #cake {
+        font-size: 25vw;
+      }
+
+      #candle {
+        font-size: 8vw;
+        top: -12vw;
+        left: 10vw;
+      }
+
+      #cutCakeBtn, #playAudioBtn {
+        font-size: 4.5vw;
+        padding: 2vh 5vw;
+      }
+
+      #message {
+        font-size: 6vw;
+      }
+    }
+
+    /* Canvas Styles */
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+    #goToHomeBtn {
+  padding: 1vh 2vw;
+  font-size: 1.5vw;
+  background-color: hotpink;
+  color: white;
+  border: none;
+  text-decoration: none;
+  cursor: pointer;
+  margin-top: 2vh;
+  display: inline-block;
+}
+
+#goToHomeBtn:hover {
+  background-color: deeppink;
+}
+  </style>
+</head>
+<body>
+  <canvas id="Canvas"></canvas>
+  <audio id="audioElement">
+    <source src="new-year-fireworks-24781.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+
+  <!-- Fullscreen LED border -->
+  <div class="led-border">
+    <div class="content">
+      <h1>🎉 Happy Anniversary Miss Shadow 🎉</h1>
+      <div id="cake">🎂</div>
+      <div id="candle">🕯️</div>
+      <button id="cutCakeBtn">Cut the Cake</button>
+      <div id="message">❤️ Happy Anniversary Miss Shadow! ❤️</div>
+      <button id="playAudioBtn">Play Music</button>
+      <a href="https://shadow2928.github.io/Frame/" id="goToHomeBtn">Memory</a>
+    </div>
+  </div>
+
+  <!-- Balloons -->
+  <div class="balloon" style="left: 10%; animation-delay: 0s;"></div>
+  <div class="balloon" style="left: 30%; animation-delay: 2s;"></div>
+  <div class="balloon" style="left: 50%; animation-delay: 4s;"></div>
+  <div class="balloon" style="left: 70%; animation-delay: 6s;"></div>
+  <div class="balloon" style="left: 90%; animation-delay: 8s;"></div>
+
+  <script>
+    const cutCakeBtn = document.getElementById('cutCakeBtn');
+    const message = document.getElementById('message');
+    const cake = document.getElementById('cake');
+    const audioElement = document.getElementById('audioElement');
+    const playAudioBtn = document.getElementById('playAudioBtn');
+
+    // Play Audio
+    playAudioBtn.addEventListener('click', () => {
+      if (audioElement.paused) {
+        audioElement.play();
+        playAudioBtn.textContent = 'Pause Music';
+      } else {
+        audioElement.pause();
+        playAudioBtn.textContent = 'Play Music';
+      }
+    });
+
+    // Fireworks effect
+    function createFirework(x, y) {
+      const firework = document.createElement('div');
+      firework.classList.add('fireworks');
+      firework.style.left = `${x}px`;
+      firework.style.top = `${y}px`;
+      document.body.appendChild(firework);
+
+      // Create sparks
+      for (let i = 0; i < 20; i++) {
+        const spark = document.createElement('div');
+        spark.classList.add('spark');
+        spark.style.left = `${x}px`;
+        spark.style.top = `${y}px`;
+        spark.style.animation = `sparkAnimation 1.5s ease-out forwards ${Math.random()}s`;
+        document.body.appendChild(spark);
+
+        setTimeout(() => spark.remove(), 1500);
+      }
+
+      setTimeout(() => {
+        firework.remove();
+      }, 2000);
+    }
+
+    // Continuous fireworks loop
+    function continuousFireworks() {
+      setInterval(() => {
+        const x = Math.random() * window.innerWidth;
+        const y = Math.random() * window.innerHeight;
+        createFirework(x, y);
+      }, 500);
+    }
+
+    // Trigger the cake cutting ceremony
+    cutCakeBtn.addEventListener('click', () => {
+      cake.innerHTML = '🍰🍰';
+      message.style.display = 'block';
+      continuousFireworks();
+      cutCakeBtn.style.display = 'none';
+    });
+
+    // Canvas Fireworks
+    const c = document.getElementById("Canvas");
+    const ctx = c.getContext("2d");
+    let cwidth, cheight;
+    let shells = [];
+    let pass = [];
+
+    const colors = ['#ff5252', '#ff4081', '#e040fb', '#7c4dff', '#53dff', '#40cdff', '#18ffff', '#64ffda', '#69f0ae', '#b2fff5'];
+
+    window.onresize = resizeTo;
+    resizeTo();
+
+    function resizeTo() {
+      cwidth = window.innerWidth;
+      cheight = window.innerHeight;
+      c.width = cwidth;
+      c.height = cheight;
+    }
+
+    function randomColor() {
+      return colors[Math.floor(Math.random() * colors.length)];
+    }
+
+    function newShell() {
+      const left = (Math.random() > 0.5);
+      const shell = {};
+      shell.x = (left ? 1 : 0);
+      shell.y = 1;
+      shell.xoff = (0.01 + Math.random() * 0.007) * (left ? 1 : -1);
+      shell.yoff = 0.01 + Math.random() * 0.007;
+      shell.size = Math.random() * 6 + 3;
+      shell.color = randomColor();
+      shells.push(shell);
+    }
+
+    function newPass(shell) {
+      const pasCount = Math.ceil(Math.pow(shell.size, 2) * Math.PI);
+      for (let i = 0; i < pasCount; i++) {
+        const pas = {};
+        pas.x = shell.x * cwidth;
+        pas.y = shell.y * cheight;
+
+        const a = Math.random() * 4;
+        const s = Math.random() * 10;
+
+        pas.xoff = s * Math.sin((5 - a) * (Math.PI / 2));
+        pas.yoff = s * Math.sin(a * (Math.PI / 2));
+
+        pas.color = shell.color;
+        pas.size = Math.sqrt(shell.size);
+
+        if (pass.length < 1000) { pass.push(pas); }
+      }
+    }
+
+    let lastRun = 0;
+    Run();
+
+    function Run() {
+      const dt = lastRun ? Math.min(50, (performance.now() - lastRun)) : 1;
+      lastRun = performance.now();
+
+      ctx.fillStyle = "rgba(0,0,0,0.25)";
+      ctx.fillRect(0, 0, cwidth, cheight);
+
+      if (shells.length < 10 && Math.random() > 0.96) { newShell(); }
+      shells.forEach((shell, ix) => {
+        ctx.beginPath();
+        ctx.arc(shell.x * cwidth, shell.y * cheight, shell.size, 0, 2 * Math.PI);
+        ctx.fillStyle = shell.color;
+        ctx.fill();
+
+        shell.x -= shell.xoff;
+        shell.y -= shell.yoff;
+        shell.xoff -= (shell.xoff * dt * 0.001);
+        shell.yoff -= ((shell.yoff + 0.2) * dt * 0.00005);
+
+        if (shell.yoff < -0.005) {
+          newPass(shell);
+          shells.splice(ix, 1);
+        }
+      });
+
+      pass.forEach((pas, ix) => {
+        ctx.beginPath();
+        ctx.arc(pas.x, pas.y, pas.size, 0, 2 * Math.PI);
+        ctx.fillStyle = pas.color;
+        ctx.fill();
+
+        pas.x -= pas.xoff;
+        pas.y -= pas.yoff;
+        pas.xoff -= (pas.xoff * dt * 0.001);
+        pas.yoff -= (dt * 0.002 * Math.random());
+
+        if (pas.y > cheight || pas.y < -50 || pas.size <= 0) {
+          pass.splice(ix, 1);
+        }
+      });
+
+      requestAnimationFrame(Run);
+    }
+  </script>
+</body>
+</html>
